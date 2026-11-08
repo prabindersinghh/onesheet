@@ -1,0 +1,26 @@
+{
+  "skill_name": "onesheet",
+  "evals": [
+    {
+      "id": 1,
+      "name": "web-app-memos",
+      "prompt": "Make me a one-pager PDF for https://github.com/usememos/memos. I want to send it to a friend who is choosing a self-hosted notes app, so they get what it is without reading the README.",
+      "expected_output": "One A4 PDF about Memos, written for someone choosing a self-hosted notes app, with a device hero showing a real or labelled screen, a vector diagram of the real flow, and the real way to run it.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "library-httpx",
+      "prompt": "/onesheet https://github.com/encode/httpx",
+      "expected_output": "One A4 PDF about HTTPX for technical peers, with an API-layer hero, a code sample that matches the real API, and the real install command.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "ml-whisper-letter",
+      "prompt": "/onesheet https://github.com/openai/whisper --audience \"product managers evaluating speech-to-text options\" --letter",
+      "expected_output": "One US Letter PDF about Whisper for product managers, with a hero showing what goes into one transcription, numbers taken only from the repo, and plain statements of limits.",
+      "files": []
+    }
+  ]
+}
