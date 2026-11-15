@@ -88,13 +88,18 @@ Don't ask questions you can answer from the repo. Ask only if the repo can't be 
 
 ## Workflow
 
-### Step 0: Check the machine can build a page
+### Step 0: Pick the build
 
-The build needs a real computer: Python 3.10 or newer, Node 18 or newer, Chrome or Edge, and internet access. Check with `python --version` and `node --version`, and look for Chrome or Edge. If anything is missing, or you're in a sandbox without a browser, such as claude.ai chat, say exactly what's missing and stop. Point the user to Claude Code on their own computer. Don't start reading the repo first, because nothing can be built.
+There are two builds. Pick one before reading the repo, and tell the user which in one line.
+
+- **Full build** (`references/BUILD-KIT.md`): Python 3.10 or newer, Node 18 or newer, Chrome or Edge, and internet access. It renders a photographic 3D hero in headless Chrome. Use it whenever all of these are present, as in Claude Code on the user's computer.
+- **Lite build** (`references/LITE-KIT.md`): Python with reportlab and pillow only. It draws the hero as exact vector 3D. Use it when there's no browser or no Node, as in claude.ai chat or the desktop chat.
+
+Check with `python --version`, `node --version` and a look for Chrome or Edge. If even the lite build can't run, because Python is missing and nothing installs, say what's missing and stop.
 
 ### Step 1: Get the repo and read it in this order
 
-With no repo given, use the project open in this session. For a URL, make a shallow clone into a new temp folder: `git clone --depth 50 <url> <tmp>/repo`. Only public repos are cloned. Never use the user's saved logins to reach a private one. If the clone fails, tell the user to clone the repo themselves and run /onesheet inside it.
+With no repo given, use the project open in this session. In a chat with no project, use a repo the user uploaded as a zip, or ask for one, or for a public URL. For a URL, make a shallow clone into a new temp folder: `git clone --depth 50 <url> <tmp>/repo`. Only public repos are cloned. Never use the user's saved logins to reach a private one. If the clone fails, as it may in a chat sandbox with limited internet, try the archive at `https://codeload.github.com/<owner>/<repo>/zip/HEAD`. If that fails too, ask the user to upload the repo as a zip, or to clone it and run /onesheet inside it.
 
 Read in this order and stop when you can answer the six questions in Step 3:
 
@@ -193,7 +198,7 @@ These are starting points. All three test pages ended up as hybrids, and the kit
 
 ### Step 6: Build
 
-Follow `references/BUILD-KIT.md`:
+Follow `references/BUILD-KIT.md`, or `references/LITE-KIT.md` for the lite build, whose `save()` runs the same kind of checks. For the full build:
 
 1. Set up the work folder with `scripts/setup_work.py`, and fetch fonts.
 2. Write `specs/*.json` and run low-resolution test renders. Look at them, and adjust angle and lighting.
@@ -244,7 +249,7 @@ If a check can't run, say so in the final message. Passing these checks only mea
 
 ### Step 9: Deliver
 
-Save the PDF to the `--out` path. Keep the work folder outside the repo, in `.onesheet/<repo-name>/work` under the user's home folder, so the user's project gets the PDF and nothing else. It holds about 150 MB of tools, and it stays there so the page can be edited later. Then write a short message with:
+Save the PDF to the `--out` path. In a chat sandbox, save it where the user can download it, such as the outputs folder. Keep the work folder outside the repo, in `.onesheet/<repo-name>/work` under the user's home folder, so the user's project gets the PDF and nothing else. It holds about 150 MB of tools, and it stays there so the page can be edited later. Then write a short message with:
 
 - The PDF path
 - Who it was written for
