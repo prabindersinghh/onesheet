@@ -1,6 +1,6 @@
 ---
 name: onesheet
-description: Turn any GitHub repo (public, private or local) into one beautiful single-page PDF that explains the project with 3D renders, diagrams and tight text, so people get the gist without reading the code or the README. Use when the user runs /onesheet, or asks for a one-pager, one-page brief, visual summary or shareable PDF of a repository or codebase.
+description: Turn a code repository (the project you have open, any local folder, or a public GitHub repo) into one beautiful single-page PDF that explains the project with 3D renders, diagrams and tight text, so people get the gist without reading the code or the README. Use when the user runs /onesheet with or without a repo, or asks for a one-pager, one-page brief, visual summary or shareable PDF of a repository or codebase.
 argument-hint: "[repo path or URL] [--audience \"...\"] [--no-internals] [--letter] [--out path]"
 ---
 
@@ -66,11 +66,11 @@ Deliver only at **44 or more, with no line below 4**. Be a harsh judge: if you'r
 
 | Input | Default | Meaning |
 |---|---|---|
-| Repo | Current directory | A local path, or a GitHub URL or `owner/name` |
+| Repo | The project open in this session | A local folder, or a public GitHub URL or `owner/name` |
 | `--audience` | Technical peers new to the project | Sets vocabulary and what gets explained |
 | `--no-internals` | Off | Explain behaviour, hide model names, vendors, stack and hosting |
 | `--letter` | A4 | US Letter page size |
-| `--out` | `<repo-name>-one-pager.pdf` in the current directory | Output path |
+| `--out` | `<repo-name>-one-pager.pdf` in the current directory | Output path. The work folder never goes inside the repo: see Step 9. |
 
 Don't ask questions you can answer from the repo. Ask only if the repo can't be read, or if the page would have to reveal something that looks confidential.
 
@@ -94,7 +94,7 @@ The build needs a real computer: Python 3.10 or newer, Node 18 or newer, Chrome 
 
 ### Step 1: Get the repo and read it in this order
 
-For a URL, make a shallow clone into a new temp folder: `git clone --depth 50 <url> <tmp>/repo`. Use `gh repo clone` for private repos, and stop with a clear message if access fails.
+With no repo given, use the project open in this session. For a URL, make a shallow clone into a new temp folder: `git clone --depth 50 <url> <tmp>/repo`. Only public repos are cloned. Never use the user's saved logins to reach a private one. If the clone fails, tell the user to clone the repo themselves and run /onesheet inside it.
 
 Read in this order and stop when you can answer the six questions in Step 3:
 
@@ -244,7 +244,7 @@ If a check can't run, say so in the final message. Passing these checks only mea
 
 ### Step 9: Deliver
 
-Save the PDF to the `--out` path and keep `work/` beside it so it can be edited later. Then write a short message with:
+Save the PDF to the `--out` path. Keep the work folder outside the repo, in `.onesheet/<repo-name>/work` under the user's home folder, so the user's project gets the PDF and nothing else. It holds about 150 MB of tools, and it stays there so the page can be edited later. Then write a short message with:
 
 - The PDF path
 - Who it was written for

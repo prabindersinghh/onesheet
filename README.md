@@ -23,19 +23,23 @@ Or copy [`skills/onesheet`](skills/onesheet/) into `~/.claude/skills/` to use it
 
 ## Use
 
+Open your project in Claude Code and type:
+
 ```
-/onesheet:onesheet https://github.com/owner/repo
+/onesheet
 ```
 
-You can also just ask, for example "make a one-pager for this repo". If you copied the folder in, the command is `/onesheet`.
+That's it. You get `<repo>-one-pager.pdf` in the folder. To make a page for a public repo you don't have open, give its URL: `/onesheet https://github.com/owner/repo`.
+
+You can also just ask, for example "make a one-pager for this repo". If another command already uses the name, type `/onesheet:onesheet`.
 
 | Option | Default | Effect |
 |---|---|---|
-| repo | the current folder | A local path, a GitHub URL, or `owner/name` |
+| repo | the project you have open | A local folder, or a public GitHub URL or `owner/name` |
 | `--audience "..."` | technical peers new to the project | Sets the vocabulary and what gets explained |
 | `--no-internals` | off | Describes behaviour and hides model names, vendors, stack and hosting |
 | `--letter` | A4 | US Letter |
-| `--out path` | `<repo>-one-pager.pdf` | Where the PDF goes. The editable `work/` folder goes beside it. |
+| `--out path` | `<repo>-one-pager.pdf` in the current folder | Where the PDF goes |
 
 ## What it does
 
@@ -56,9 +60,10 @@ The delivery message lists README claims the code contradicted, what it didn't r
 
 ## What it runs and fetches
 
-Everything runs on your machine, in a `work/` folder beside the PDF.
+Everything runs on your machine.
 
-- **The repo:** `git clone --depth 50` of the URL you give. For a private repo it uses `gh repo clone`, which signs in with your own GitHub CLI login and talks only to GitHub. The skill never reads, prints or stores the token. The repo's code is read, never run, and its install scripts are never run.
+- **The repo:** the project you have open, a folder you name, or `git clone --depth 50` of a public GitHub URL. It never uses your logins. For a private repo, clone it yourself and run `/onesheet` inside it. The repo's code is read, never run, and its install scripts are never run.
+- **Its own work folder:** `.onesheet/<repo>/work` in your home folder, about 150 MB of tools, kept outside your project so the page can be edited later. Your project only gets the PDF.
 - **Tools, installed into `work/`:** a Python virtual environment with pillow 13.0.0, pypdf 6.21.4 and pypdfium2 5.14.0 from PyPI, and playwright 1.49.1, qrcode 1.5.3, jsqr 1.4.0 and pngjs 7.0.0 from npm. Playwright uses your installed Chrome or Edge.
 - **Fonts:** static font files from Google Fonts, chosen per page.
 - **three.js 0.170.0:** loaded from the unpkg CDN inside headless Chrome, to render the 3D hero.

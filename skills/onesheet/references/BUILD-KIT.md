@@ -38,7 +38,7 @@ python build.py zoom 13 150 90 60                   # 400 dpi crop of the PDF to
 
 Write long files with a file-writing tool. Large shell heredocs failed in all three test runs.
 
-The three.js library loads from a CDN at a pinned version. Only the library request goes out, never repo content. If the machine must stay offline, run `npm i three@0.170.0` and point the import map in `render.html` to `node_modules/three`.
+The three.js library loads from a CDN at a pinned version. Only the library request goes out, never repo content, so the build needs internet access.
 
 ## 2. Scene types
 
@@ -238,7 +238,7 @@ Level leader lines look cleanest. Set `"to": [x, null]`, and the build prints th
 | An opaque plate prints lighter than its `tint` | Clearcoat and studio light add brightness: `#b4541f` came out near `#ef7d4e` | Choose a darker tint, and compare in the flat preview |
 | A repo's SVG logo prints black or disappears | It uses `currentColor`, which an `<img>` can't inherit | Replace the fill in your copy in `work/assets/` |
 | A figure sits only in a chart image | Many SVG charts store text as paths, so there's nothing to search | Rasterize it through an `<img>` wrapper, so nothing in the file runs, read it at high zoom, and say so in the ledger |
-| You need numpy or an audio library to process a repo's data file | The `.venv` has only the build tools | `.venv/Scripts/python -m pip install numpy soundfile` |
+| You want numpy or an audio library to process a repo's data file | The `.venv` has only the build tools | Ask the user before installing anything more, and say what and why |
 | Text-on-box check fires on a label inside a panel | The label is a separate `.a` element placed on the panel | Nest the label inside the panel element |
 
 ## 5. What the first version got wrong, and why it matters
