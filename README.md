@@ -58,7 +58,7 @@ The delivery message lists README claims the code contradicted, what it didn't r
 
 Everything runs on your machine, in a `work/` folder beside the PDF.
 
-- **The repo:** `git clone --depth 50` of the URL you give, or `gh repo clone` for a private repo. Its code is read, never run, and its install scripts are never run.
+- **The repo:** `git clone --depth 50` of the URL you give. For a private repo it uses `gh repo clone`, which signs in with your own GitHub CLI login and talks only to GitHub. The skill never reads, prints or stores the token. The repo's code is read, never run, and its install scripts are never run.
 - **Tools, installed into `work/`:** a Python virtual environment with pillow 13.0.0, pypdf 6.21.4 and pypdfium2 5.14.0 from PyPI, and playwright 1.49.1, qrcode 1.5.3, jsqr 1.4.0 and pngjs 7.0.0 from npm. Playwright uses your installed Chrome or Edge.
 - **Fonts:** static font files from Google Fonts, chosen per page.
 - **three.js 0.170.0:** loaded from the unpkg CDN inside headless Chrome, to render the 3D hero.

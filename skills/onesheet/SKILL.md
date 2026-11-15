@@ -14,12 +14,12 @@ Paths here are relative to this skill's folder. Scene formats and known pitfalls
 
 ## The quality bar
 
-The benchmark folder holds four reference pages, as 150 dpi images:
+The benchmark folder holds four reference pages, as 150 dpi images. Each is named after its project:
 
-- glow.jpg: a CLI tool. The hero puts raw Markdown behind the terminal it becomes.
-- memos.jpg: a self-hosted web app, written for someone choosing one.
-- httpx.jpg: a Python library, with the API pulled apart into plates.
-- whisper.jpg: an ML project, on US Letter, for product managers.
+- Glow, a CLI tool. The hero puts raw Markdown behind the terminal it becomes.
+- Memos, a self-hosted web app, written for someone choosing one.
+- HTTPX, a Python library, with the API pulled apart into plates.
+- Whisper, an ML project, on US Letter, for product managers.
 
 Look at them before designing anything. Copy the level of craft, not the layout, colours or fonts. Every page you make should at least match them.
 

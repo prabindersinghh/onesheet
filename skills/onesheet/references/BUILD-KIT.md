@@ -23,7 +23,7 @@ python <skill folder>/scripts/setup_work.py work     # tools, a .venv and node_m
 
 Tools land in `work/`. Sample content lands in `work/starter/`, so write your real `page.html`, `layout.json`, `facts.md`, `diagram.py` and `specs/` fresh in `work/`, reading the starters for reference. To try the sample page instead, copy everything from `starter/` into `work/`, and expect the word count check to fail on its short copy.
 
-If the system has no browser, run `npx playwright install chromium`. The scripts otherwise use the installed Chrome or Edge.
+The scripts use the installed Chrome or Edge. If neither is installed, stop and ask the user to install one.
 
 Commands, all run from `work/`. `build.py` hands itself to `.venv` automatically, so any `python` works:
 
@@ -583,7 +583,7 @@ async function launch() {
   for (const channel of ['chrome', 'msedge', undefined]) {
     try { return await chromium.launch({ channel, headless: true, args: gl }); } catch { /* try the next browser */ }
   }
-  throw new Error('No browser found. Install Chrome, or run: npx playwright install chromium');
+  throw new Error('No browser found. Install Chrome or Edge, then run the command again.');
 }
 
 async function render(names) {
