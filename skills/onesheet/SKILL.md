@@ -14,12 +14,12 @@ Paths here are relative to this skill's folder. Scene formats and known pitfalls
 
 ## The quality bar
 
-`benchmark/` holds four reference pages, each with a `.jpg` copy for tools that can't open a PDF:
+The benchmark folder holds four reference pages, as 150 dpi images:
 
-- `glow.pdf`: a CLI tool. The hero puts raw Markdown behind the terminal it becomes.
-- `memos.pdf`: a self-hosted web app, written for someone choosing one.
-- `httpx.pdf`: a Python library, with the API pulled apart into plates.
-- `whisper.pdf`: an ML project, on US Letter, for product managers.
+- glow.jpg: a CLI tool. The hero puts raw Markdown behind the terminal it becomes.
+- memos.jpg: a self-hosted web app, written for someone choosing one.
+- httpx.jpg: a Python library, with the API pulled apart into plates.
+- whisper.jpg: an ML project, on US Letter, for product managers.
 
 Look at them before designing anything. Copy the level of craft, not the layout, colours or fonts. Every page you make should at least match them.
 
@@ -87,6 +87,10 @@ Don't ask questions you can answer from the repo. Ask only if the repo can't be 
 9. **One page, always.** Cut content instead of shrinking type below the limits in Step 5.
 
 ## Workflow
+
+### Step 0: Check the machine can build a page
+
+The build needs a real computer: Python 3.10 or newer, Node 18 or newer, Chrome or Edge, and internet access. Check with `python --version` and `node --version`, and look for Chrome or Edge. If anything is missing, or you're in a sandbox without a browser, such as claude.ai chat, say exactly what's missing and stop. Point the user to Claude Code on their own computer. Don't start reading the repo first, because nothing can be built.
 
 ### Step 1: Get the repo and read it in this order
 

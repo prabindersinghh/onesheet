@@ -4,14 +4,11 @@ A Claude Code skill that turns a repository into a single printable page: a 3D h
 
 In film, a one-sheet is the single poster that sells a movie. This is that, for a repo.
 
-<p>
-<img src="skills/onesheet/benchmark/httpx.jpg" width="24%" alt="One-pager for the HTTPX library" />
-<img src="skills/onesheet/benchmark/memos.jpg" width="24%" alt="One-pager for the Memos web app" />
-<img src="skills/onesheet/benchmark/whisper.jpg" width="24%" alt="One-pager for the Whisper ML project" />
-<img src="skills/onesheet/benchmark/glow.jpg" width="24%" alt="One-pager for the Glow CLI" />
-</p>
+| Library | Web app | ML project | CLI |
+|---|---|---|---|
+| ![One-pager for the HTTPX library](skills/onesheet/benchmark/httpx.jpg) | ![One-pager for the Memos web app](skills/onesheet/benchmark/memos.jpg) | ![One-pager for the Whisper ML project](skills/onesheet/benchmark/whisper.jpg) | ![One-pager for the Glow CLI](skills/onesheet/benchmark/glow.jpg) |
 
-Each example was made by the skill from the public repo alone. They're unofficial summaries, not documents from those projects. Full PDFs are in [`skills/onesheet/benchmark/`](skills/onesheet/benchmark/).
+Each example was made by the skill from the public repo alone. They're unofficial summaries, not documents from those projects. The full PDFs are attached to the [latest release](https://github.com/prabindersinghh/onesheet/releases/latest).
 
 ## Install
 
@@ -53,9 +50,22 @@ The delivery message lists README claims the code contradicted, what it didn't r
 
 ## Requirements
 
-- Claude Code
+- Claude Code on your own computer, or a Cowork session that runs on your computer. It can't build a page in claude.ai chat, which has no browser to render with, and it says so and stops.
 - Python 3.10 or newer, Node 18 or newer, and Chrome or Edge
-- Internet access, for fonts and the three.js library. Nothing from the repo is sent anywhere.
+- Internet access
+
+## What it runs and fetches
+
+Everything runs on your machine, in a `work/` folder beside the PDF.
+
+- **The repo:** `git clone --depth 50` of the URL you give, or `gh repo clone` for a private repo. Its code is read, never run, and its install scripts are never run.
+- **Tools, installed into `work/`:** a Python virtual environment with pillow 13.0.0, pypdf 6.21.4 and pypdfium2 5.14.0 from PyPI, and playwright 1.49.1, qrcode 1.5.3, jsqr 1.4.0 and pngjs 7.0.0 from npm. Playwright uses your installed Chrome or Edge.
+- **Fonts:** static font files from Google Fonts, chosen per page.
+- **three.js 0.170.0:** loaded from the unpkg CDN inside headless Chrome, to render the 3D hero.
+- **A local web server:** `build.py` serves `work/` on 127.0.0.1, on a free port, while it renders and prints. It stops when the command ends.
+- **Public counts, sometimes:** the skill may read figures such as GitHub stars or Docker pulls from those services' public APIs. The page names the source and date.
+
+Nothing from the repo, the page or your machine is sent anywhere else. Requests to Google Fonts, unpkg, PyPI and npm carry only what they need to serve the files.
 
 ## Cost and status
 

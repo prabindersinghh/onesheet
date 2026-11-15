@@ -8,7 +8,7 @@
     {
       "name": "onesheet",
       "description": "Turn any repository into one printable page: a 3D hero, a diagram traced from the code, sourced numbers and the command to try it.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./",
       "author": {
         "name": "Prabinder Singh"
