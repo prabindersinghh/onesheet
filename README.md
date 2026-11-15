@@ -52,11 +52,20 @@ You can also just ask, for example "make a one-pager for this repo". If another 
 
 The delivery message lists README claims the code contradicted, what it didn't read, what is labelled as illustration, and its score.
 
-## Requirements
+## Where it runs
 
-- Claude Code on your own computer, or a Cowork session that runs on your computer. It can't build a page in claude.ai chat, which has no browser to render with, and it says so and stops.
-- Python 3.10 or newer, Node 18 or newer, and Chrome or Edge
-- Internet access
+onesheet picks one of two builds by itself, and tells you which:
+
+| | Full build | Lite build |
+|---|---|---|
+| Where | Claude Code, or Cowork on your computer | claude.ai, Claude Desktop chat, and anywhere without a browser |
+| Needs | Python 3.10+, Node 18+, Chrome or Edge, internet | Python with reportlab and pillow |
+| Hero | A photographic 3D render, made in headless Chrome | Exact vector 3D: plates, screens and blocks drawn in perspective |
+| Checks | Layout, type, words, facts, banned words, secrets, resolution, QR decode | The same, except the QR decode |
+
+Both builds keep the same fact ledger, rules and quality bar. Compare them on the same repos: [hyperfine](docs/compare-hyperfine.jpg) and [HTTPX](docs/compare-httpx.jpg).
+
+In claude.ai, turn on **Code execution and file creation** in Settings. If the sandbox can't download a repo, upload it as a zip, which GitHub gives you under **Code > Download ZIP**.
 
 ## What it runs and fetches
 
@@ -64,7 +73,8 @@ Everything runs on your machine.
 
 - **The repo:** the project you have open, a folder you name, or `git clone --depth 50` of a public GitHub URL. It never uses your logins. For a private repo, clone it yourself and run `/onesheet` inside it. The repo's code is read, never run, and its install scripts are never run.
 - **Its own work folder:** `.onesheet/<repo>/work` in your home folder, about 150 MB of tools, kept outside your project so the page can be edited later. Your project only gets the PDF.
-- **Tools, installed into `work/`:** a Python virtual environment with pillow 13.0.0, pypdf 6.21.4 and pypdfium2 5.14.0 from PyPI, and playwright 1.49.1, qrcode 1.5.3, jsqr 1.4.0 and pngjs 7.0.0 from npm. Playwright uses your installed Chrome or Edge.
+- **Lite build:** only reportlab and pillow, plus pypdf and pypdfium2 when present. Its fonts, IBM Plex Sans and Mono under the SIL Open Font License, ship with the skill, so it fetches nothing else.
+- **Full build tools, installed into `work/`:** a Python virtual environment with pillow 13.0.0, pypdf 6.21.4 and pypdfium2 5.14.0 from PyPI, and playwright 1.49.1, qrcode 1.5.3, jsqr 1.4.0 and pngjs 7.0.0 from npm. Playwright uses your installed Chrome or Edge.
 - **Fonts:** static font files from Google Fonts, chosen per page.
 - **three.js 0.170.0:** loaded from the unpkg CDN inside headless Chrome, to render the 3D hero.
 - **A local web server:** `build.py` serves `work/` on 127.0.0.1, on a free port, while it renders and prints. It stops when the command ends.
@@ -76,7 +86,7 @@ Nothing from the repo, the page or your machine is sent anywhere else. Requests 
 
 A page takes about 15 to 30 minutes and 210,000 to 265,000 tokens. That's about twice a plain attempt, spent on the critique rounds.
 
-Tested on Windows 11 with Chrome, on a web app, a library, an ML project and two CLIs. Not yet tested on macOS or Linux, private or very large repos, `--no-internals`, or heroes built from a repo's own 3D model. Reports from those are welcome.
+The full build is tested on Windows 11 with Chrome, on a web app, a library, an ML project and two CLIs. The lite build is tested on a CLI and a library in a Python-only setup that mimics a chat sandbox, but not yet inside claude.ai itself. Not yet tested: macOS or Linux, private or very large repos, `--no-internals`, and heroes built from a repo's own 3D model. Reports are welcome.
 
 ## Develop
 
