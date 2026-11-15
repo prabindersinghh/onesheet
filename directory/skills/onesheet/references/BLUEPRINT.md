@@ -15,7 +15,21 @@ python -c "import pypdf, pypdfium2; print('ok')"
 
 reportlab and pillow are required. pypdf (text extraction) and pypdfium2 (previews) are strongly wanted. If any are missing, tell the user which, then `pip install reportlab pillow pypdf pypdfium2`. If previews still can't be made, build anyway and say in the delivery message that you couldn't look at the page, because the critique in SKILL.md Step 7 depends on seeing it.
 
-Fonts ship with this skill in `assets/fonts/`: IBM Plex Sans at weights 300, 400, 600 and 700, and IBM Plex Mono at 400 and 500, under the SIL Open Font License. Use them for every page and vary colour between projects instead of the family.
+**Fonts.** The page uses IBM Plex Sans at weights 300, 400, 600 and 700, and IBM Plex Mono at 400 and 500, free under the SIL Open Font License. Fetch them once into `work/fonts/` from the Google Fonts CSS API, which serves static TrueType files to a plain client:
+
+```python
+url = "https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,400,600,700|IBM+Plex+Mono:400,500"
+css = urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "onesheet"})).read().decode()
+for family, weight, src in re.findall(r"font-family: '([^']+)';.*?font-weight: (\d+);.*?url\((https://[^)]+\.ttf)\)", css, re.S):
+    # save to work/fonts/<IBMPlexSans|IBMPlexMono>-<weight>.ttf
+```
+
+Each file must start with the bytes `00 01 00 00`. If the download fails, as it can in a sandbox with limited internet, fall back in this order and tell the user which you used:
+
+1. DejaVu Sans and DejaVu Sans Mono from the system (`/usr/share/fonts/truetype/dejavu/`) or from matplotlib's `mpl-data/fonts/ttf/`, if either is present. Map weights 300 and 400 to the regular face, and 600 and 700 to bold.
+2. reportlab's built-in Helvetica, Helvetica-Bold, Courier and Courier-Bold, which need no files. They cover Latin-1 only, so the glyph check becomes: every character encodes in cp1252.
+
+Vary colour between projects, not the family.
 
 ## 2. What to write
 
@@ -60,7 +74,7 @@ X = lambda x: x * MM                 # mm from left  -> PDF points
 Y = lambda y: (H - y) * MM           # mm from top   -> PDF points (PDF y runs up)
 ```
 
-Register the six fonts with `reportlab.pdfbase.ttfonts.TTFont` as `Sans-300`, `Sans-400`, `Sans-600`, `Sans-700`, `Mono-400` and `Mono-500`. Map a requested weight to the nearest registered sans weight. Plex Mono's advance is 0.6 em for every character, so a mono run of n characters at size s is exactly `0.6 * n * s` points wide, which is what lets you aim a leader at a terminal column. For mono, use 500 when the weight is 500 or more, else 400.
+Register the six fonts from `work/fonts/` with `reportlab.pdfbase.ttfonts.TTFont` as `Sans-300`, `Sans-400`, `Sans-600`, `Sans-700`, `Mono-400` and `Mono-500`. Map a requested weight to the nearest registered sans weight. Plex Mono's advance is 0.6 em for every character, so a mono run of n characters at size s is exactly `0.6 * n * s` points wide, which is what lets you aim a leader at a terminal column. For mono, use 500 when the weight is 500 or more, else 400.
 
 Set `setLineCap(1)` and `setLineJoin(1)` once, so hairlines end round and joins look drawn, not cut.
 
@@ -275,6 +289,6 @@ Starting cameras: a plate stack at az −30 and el 26, with a scale of about 40 
 
 - No photographic lighting or reflections. The hero is clean vector art, so give it a strong idea: layered plates with real content, or a screen with a real screenshot.
 - No rounded plate corners.
-- Fonts are limited to the bundled family.
+- Fonts are limited to IBM Plex, or the fallbacks in section 1.
 
 Caption the hero as an illustration.

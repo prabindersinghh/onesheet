@@ -176,7 +176,7 @@ Defaults:
 
 - **Background:** white
 - **Colour:** one ink, one slate for text, one muted, one hairline, one accent. Status colours only where they mean something (pass, fail, warning).
-- **Type:** IBM Plex Sans at weights 300 to 700, and IBM Plex Mono for code, both bundled in `assets/fonts/`.
+- **Type:** IBM Plex Sans at weights 300 to 700, and IBM Plex Mono for code, fetched as the blueprint's section 1 describes.
 - **Type sizes:** headline 30 to 38 pt, section heads 12 to 21 pt, body 7.5 to 9.2 pt, captions at least 6.2 pt. Big numerals at weight 300. Text inside diagrams is at least 5.8 pt.
 - **Grid:** 13 mm side margins and 12 columns, with 4 mm gutters. Column n starts at 13 + 15.67n mm on A4, and 13 + 16.16n mm on Letter. Blocks in different sections share these edges.
 - **Lines:** hairlines of about 0.2 mm, with small colored dots as markers.
