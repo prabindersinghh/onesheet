@@ -48,7 +48,7 @@ p.qr(178.6, 250, 18.4, "https://github.com/owner/repo")
 p.save()
 ```
 
-Run it with `python page.py`. `save()` writes the PDF, runs the checks, and writes `out/page_small.jpg`, `out/z_top.png` and `out/z_bottom.png`. For a 400 dpi crop: `python SKILL_DIR/scripts/sheet.py out/name-one-pager.pdf x y w h`.
+Run it with `python page.py`. `save()` writes the PDF, runs the checks, and writes `page_small.jpg`, `z_top.png` and `z_bottom.png` beside the PDF, so build into `out/` and copy the finished PDF to where the user can download it. For a 400 dpi crop: `python SKILL_DIR/scripts/sheet.py out/name-one-pager.pdf x y w h`.
 
 ## 3. The calls
 
@@ -76,7 +76,14 @@ Run it with `python page.py`. `save()` writes the PDF, runs the checks, and writ
 
 Starting cameras: a plate stack at `az -30, el 26`, with scale about 40 mm per unit for a hero 130 mm wide. A screen at `az 0, el 6`, with `yaw -20`.
 
-## 5. What it can't do
+## 5. Lessons from real pages
+
+- **Characters:** the bundled fonts have Latin letters, digits, common punctuation and ±, but no Greek letters and no arrows. Write "std. dev." for σ, and "to" or a drawn arrow for →. The build fails on any character the font lacks, because it would print as an empty box.
+- **Plates hide each other:** an upper plate covers the back of the one below. Keep each plate's content in its front two thirds, or raise `gap`.
+- **The QR code isn't decoded**, since there's no decoder in a sandbox. It's generated from the exact URL, so check that string instead.
+- **Ignore full-build steps:** `build.py`, `setup_work.py` and `build.py spots` belong to the full build. Here, spots come back from `plates`, `screen` and `blocks` already in page mm.
+
+## 6. What it can't do
 
 - No photographic lighting or reflections. The hero is clean vector art, so give it a strong idea instead: layered plates with real content, or a screen with a real screenshot.
 - No rounded plate corners and no glass reflections.

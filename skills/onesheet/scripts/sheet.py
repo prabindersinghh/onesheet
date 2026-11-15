@@ -89,8 +89,12 @@ class Page:
         self.c.setTitle(title); self.c.setAuthor(author); self.c.setSubject(subject)
         self.c.setLineCap(1); self.c.setLineJoin(1)
         self.texts, self.fills, self.solids, self.images, self.notes = [], [], [], [], []
+        self.segments, self.shadows, self.glyphs, self.grid = [], [], {}, 13
 
     # ------------------------------------------------------------------ basics
+    def _use(self, fnt, s):
+        self.glyphs.setdefault(fnt, set()).update(s)
+
     def X(self, x): return x * MM
     def Y(self, y): return (self.H - y) * MM
 
@@ -113,11 +117,15 @@ class Page:
 
     def rule(self, x, y, w, color=None, sw=0.2):
         """A hairline. Text crossing it fails the check."""
-        self.line([(x, y), (x + w, y)], color or self.line_color, sw)
+        self.line([(x, y), (x + w, y)], color or self.line_color, sw, block=False)
         self.fills.append(((x, y - sw / 2, w, sw), "a rule"))
 
-    def line(self, pts, color=None, sw=0.2, arrow=False, dash=None):
+    def line(self, pts, color=None, sw=0.2, arrow=False, dash=None, block=True):
+        """A path. It blocks text: a line through a word fails the check. Leaders pass block=False."""
         c = self.c
+        if block:
+            for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+                self.segments.append(((x0, y0), (x1, y1)))
         self._stroke(color or self.line_color, sw)
         if dash: c.setDash([d * MM for d in dash])
         p = c.beginPath(); p.moveTo(self.X(pts[0][0]), self.Y(pts[0][1]))
@@ -141,7 +149,7 @@ class Page:
         """A thin line from a spot on the hero to a label. Use to=(x, None) for a level line."""
         tx, ty = to
         ty = frm[1] if ty is None else ty
-        self.line([frm, (tx, ty)], color or self.accent, 0.2)
+        self.line([frm, (tx, ty)], color or self.accent, 0.2, block=False)
         self.dot(*frm, color=color)
         if end_dot: self._fill(color or self.accent); self.c.circle(self.X(tx), self.Y(ty), 0.5 * MM, stroke=0, fill=1)
         return ty
@@ -187,11 +195,11 @@ class Page:
                 if j: cx += space
                 for t, (wt, mn) in word:
                     sz = size * (0.94 if mn and not mono else 1)
-                    c.setFont(font(wt, mn), sz); self._fill(color or self.text_color)
+                    c.setFont(font(wt, mn), sz); self._fill(color or self.text_color); self._use(font(wt, mn), t)
                     c.drawString(self.X(cx), self.Y(base), t)
                     cx += pdfmetrics.stringWidth(t, font(wt, mn), sz) / MM
             if words: rects.append((lx, base - size_mm * 0.78, lw, size_mm * 1.0))
-        if len(lines) > 1 and lines[-1][0] and len(lines[-1][0]) == 1 and kind == "body":
+        if len(lines) > 1 and lines[-1][0] and len(lines[-1][0]) == 1:
             self.notes.append(f'orphan word at the end of "{s[:40]}"')
         self.texts.append({"s": re.sub(r"\*\*|`", "", s), "rects": rects, "size": size, "kind": kind, "parent": parent})
         return y + len(lines) * leading_mm
@@ -209,7 +217,7 @@ class Page:
         for i, ln in enumerate(lines):
             cx, base = x + pad, y + pad + size / MM * 0.8 + i * lead
             for t, col in ([(ln, fg)] if isinstance(ln, str) else ln):
-                self.c.setFont("Mono-400", size); self._fill(col); self.c.drawString(self.X(cx), self.Y(base), t)
+                self.c.setFont("Mono-400", size); self._fill(col); self._use("Mono-400", t); self.c.drawString(self.X(cx), self.Y(base), t)
                 cx += pdfmetrics.stringWidth(t, "Mono-400", size) / MM
             self.texts.append({"s": "".join(t for t, _ in ([(ln, fg)] if isinstance(ln, str) else ln)),
                                "rects": [(x + pad, base - size / MM * .78, cx - x - pad, size / MM)], "size": size, "kind": "body", "parent": box})
@@ -263,6 +271,7 @@ class Page:
         col = HexColor(color or self.ink)
         rgba = Image.new("RGBA", (W, H), (int(col.red * 255), int(col.green * 255), int(col.blue * 255), 0)); rgba.putalpha(m)
         self.c.drawImage(ImageReader(rgba), self.X(x0), self.Y(y1), (x1 - x0) * MM, (y1 - y0) * MM, mask="auto")
+        self.shadows.append((min(xs) - blur, min(ys) - blur, max(xs) - min(xs) + 2 * blur, max(ys) - min(ys) + 2 * blur))
 
     def _plane(self, O, R, F, cw, ch):
         """Map a cw x ch canvas (y down) onto the projected plane O (top left), R (top right), F (bottom left)."""
@@ -293,7 +302,7 @@ class Page:
                     if isinstance(t, str): t = [(t, m.get("color", self.ink))]
                     cx = 0
                     for piece, col in t:
-                        c.setFont(fnt, m.get("size", 130)); self._fill(col); c.drawString(cx, 0, piece)
+                        c.setFont(fnt, m.get("size", 130)); self._fill(col); self._use(fnt, piece); c.drawString(cx, 0, piece)
                         cx += pdfmetrics.stringWidth(piece, fnt, m.get("size", 130))
                     c.restoreState()
             elif k == "fill":
@@ -321,8 +330,12 @@ class Page:
     def save(self):
         """Write the PDF, run the checks, render previews. Exits with status 1 if a check fails."""
         self.c.showPage(); self.c.save()
+        try:  # a report naming a character the console can't show must not crash
+            sys.stdout.reconfigure(errors="backslashreplace")
+        except Exception:
+            pass
         text = self._extract()
-        fails, words = [], len(text.split())
+        fails, words = [], len(re.findall(r"\S*[A-Za-z0-9]\S*", text))
         print(f"file: {self.path}\npage: {self.size} {self.W} x {self.H} mm, {self.path.stat().st_size / 1048576:.2f} MB, {words} words")
         if not WORD_BUDGET[0] <= words <= WORD_BUDGET[1]:
             fails.append(f"{words} words on the page, including diagrams and code. The budget is {WORD_BUDGET[0]} to {WORD_BUDGET[1]}.")
@@ -345,6 +358,18 @@ class Page:
                 if any(_overlap(r, box, 0.15) for r in a["rects"]): fails.append(f'"{lab(a)}" sits on {name}')
             for poly, name in self.solids:
                 if any(_rect_hits_poly(r, poly) for r in a["rects"]): fails.append(f'"{lab(a)}" sits on {name}')
+        for fnt, chars in self.glyphs.items():
+            cmap = pdfmetrics.getFont(fnt).face.charToGlyph
+            gone = sorted(ch for ch in chars if not ch.isspace() and ord(ch) not in cmap)
+            if gone: fails.append(f"the font has no glyph for {gone}, which print as empty boxes. Reword, e.g. 'std. dev.' for a sigma.")
+        for a in T:
+            for r in a["rects"]:
+                if any(_seg_hits(r, s) for s in self.segments): fails.append(f'a line runs through "{lab(a)}"'); break
+            if a["parent"] is None and any(r[0] < self.grid - 0.5 or r[0] + r[2] > self.W - self.grid + 0.5 for r in a["rects"]):
+                fails.append(f'"{lab(a)}" is outside the {self.grid} mm side margins of the grid')
+        for sh in self.shadows:
+            for box, name in self.fills:
+                if name == "a rule" and _overlap(sh, box, 0): fails.append("a soft shadow crosses a rule. Move the hero or lower its shadow.")
         for name, dpi in self.images:
             if dpi < 299: fails.append(f"{name} is {dpi:.0f} dpi as printed, under 300")
         missing = self._numbers(text)
@@ -465,6 +490,8 @@ class View:
         p = c.beginPath(); p.rect(0, 0, CW, CH); c.clipPath(p, stroke=0, fill=0)
         if image:
             P._marks([{"kind": "image", "src": image}], CW, CH)
+            with Image.open(image) as im:  # sharpness as printed, across the screen's projected width
+                P.images.append(("the screen image", im.width / (math.dist(tl, tr) / 25.4)))
         elif terminal:
             t = terminal
             P._fill(t.get("bg", "#0b1020")); c.rect(0, 0, CW, CH, stroke=0, fill=1)
@@ -506,6 +533,14 @@ class View:
             P.solids.append(([C(-1, h, -1), C(1, h, -1), C(1, 0, -1), C(1, 0, 1), C(-1, 0, 1), C(-1, h, 1)], f'the {n["id"]} block'))
             spots[n["id"]] = self.proj(n["x"], h, n["z"])
         return spots
+
+
+def _seg_hits(r, seg, pad=0.2):
+    """Does a line segment cross a text box? Sampled, since lines are short and boxes are small."""
+    (x0, y0), (x1, y1) = seg
+    n = max(2, int(math.hypot(x1 - x0, y1 - y0) / 0.4))
+    x, y, w, h = r[0] + pad, r[1] + pad, r[2] - 2 * pad, r[3] - 2 * pad
+    return any(x < x0 + (x1 - x0) * i / n < x + w and y < y0 + (y1 - y0) * i / n < y + h for i in range(n + 1))
 
 
 def _floor_pt(ya, offset, x, y, z):
