@@ -16,7 +16,7 @@ import sys
 
 TOOLS = {"build.py", "tools.mjs", "render.html"}
 PIP = ["pillow==13.0.0", "pypdf==6.21.4", "pypdfium2==5.14.0"]
-NPM = ["playwright@1.49.1", "qrcode@1.5.3", "jsqr@1.4.0", "pngjs@7.0.0"]
+NPM = ["playwright@1.49.1", "qrcode@1.5.3", "jsqr@1.4.0", "pngjs@7.0.0", "three@0.170.0"]
 
 
 def main(work):

@@ -74,13 +74,12 @@ Everything runs on your machine.
 - **The repo:** the project you have open, a folder you name, or `git clone --depth 50` of a public GitHub URL. It never uses your logins. For a private repo, clone it yourself and run `/onesheet` inside it. The repo's code is read, never run, and its install scripts are never run.
 - **Its own work folder:** `.onesheet/<repo>/work` in your home folder, about 150 MB of tools, kept outside your project so the page can be edited later. Your project only gets the PDF.
 - **Lite build:** only reportlab and pillow, plus pypdf and pypdfium2 when present. Its fonts, IBM Plex Sans and Mono under the SIL Open Font License, ship with the skill, so it fetches nothing else.
-- **Full build tools, installed into `work/`:** a Python virtual environment with pillow 13.0.0, pypdf 6.21.4 and pypdfium2 5.14.0 from PyPI, and playwright 1.49.1, qrcode 1.5.3, jsqr 1.4.0 and pngjs 7.0.0 from npm. Playwright uses your installed Chrome or Edge.
+- **Full build tools, installed into `work/`:** a Python virtual environment with pillow 13.0.0, pypdf 6.21.4 and pypdfium2 5.14.0 from PyPI, and playwright 1.49.1, qrcode 1.5.3, jsqr 1.4.0, pngjs 7.0.0 and three.js 0.170.0 from npm. three.js renders the 3D hero and is loaded from `work/`, not from a CDN. Playwright uses your installed Chrome or Edge.
 - **Fonts:** static font files from Google Fonts, chosen per page.
-- **three.js 0.170.0:** loaded from the unpkg CDN inside headless Chrome, to render the 3D hero.
 - **A local web server:** `build.py` serves `work/` on 127.0.0.1, on a free port, while it renders and prints. It stops when the command ends.
 - **Public counts, sometimes:** the skill may read figures such as GitHub stars or Docker pulls from those services' public APIs. The page names the source and date.
 
-Nothing from the repo, the page or your machine is sent anywhere else. Requests to Google Fonts, unpkg, PyPI and npm carry only what they need to serve the files.
+Nothing from the repo, the page or your machine is sent anywhere else. Requests to Google Fonts, PyPI and npm carry only what they need to serve the files.
 
 ## Cost and status
 

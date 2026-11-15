@@ -194,7 +194,7 @@ All positions are in mm from the page's top left. A negative `x` lets the hero b
   "subject": "One-page brief",
   "pdf": "out/project-one-pager.pdf",
   "size": "A4",
-  "url": "https://example.com",
+  "url": "https://github.com/owner/repo",
   "banned": ["internal-name"],
   "images": { "hero": { "x": -12, "y": 9.4, "w": 234 } },
   "leaders": [
@@ -323,8 +323,8 @@ def serve():
 
 
 def node(base, *args, capture=False):
-    env = {**os.environ, "BASE": base}
-    return subprocess.run(["node", "tools.mjs", *args], cwd=ROOT, env=env, check=True, text=True,
+    """The local server address goes in as the first argument."""
+    return subprocess.run(["node", "tools.mjs", base, *args], cwd=ROOT, check=True, text=True,
                           capture_output=capture, encoding="utf-8").stdout
 
 
@@ -575,8 +575,7 @@ import QRCode from 'qrcode';
 import jsQR from 'jsqr';
 import { PNG } from 'pngjs';
 
-const [cmd, ...args] = process.argv.slice(2);
-const BASE = process.env.BASE;
+const [BASE, cmd, ...args] = process.argv.slice(2);
 
 async function launch() {
   const gl = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
@@ -709,8 +708,8 @@ else if (cmd === 'qr') {
 <style>body { margin: 0; background: #fff; } canvas { max-width: 100%; height: auto; display: block; }</style>
 <script type="importmap">
 { "imports": {
-  "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
-  "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+  "three": "./node_modules/three/build/three.module.js",
+  "three/addons/": "./node_modules/three/examples/jsm/"
 } }
 </script>
 <script type="module">
@@ -1333,7 +1332,7 @@ pathlib.Path("diagram.svgfrag").write_text("".join(out), encoding="utf-8")
   "subject": "One-page brief",
   "pdf": "out/sample-one-pager.pdf",
   "size": "A4",
-  "url": "https://example.com",
+  "url": "https://github.com/owner/repo",
   "banned": ["internal-name"],
   "images": {
     "hero": { "x": 20, "y": 34, "w": 145, "alt": "A terminal window, in 3D" },
